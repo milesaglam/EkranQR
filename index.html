@@ -43,7 +43,7 @@
       foto.style.display = "block"; durum.style.display = "none"; btn.style.display = "block";
       if (!(navigator.canShare && navigator.canShare({files: [dosya]}))) ipucu.style.display = "block";
     })
-    .catch(function(e){ durum.textContent = "Resim yüklenemedi: " + e.message; });
+    .catch(function(e){    durum.textContent = "Bu resmin süresi dolmuş olabilir. Yeniden gönderilmesini isteyin."; });
 
   btn.addEventListener("click", function(){
     if (!dosya) return;
