@@ -48,7 +48,7 @@
   btn.addEventListener("click", function(){
     if (!dosya) return;
     var veri = {files: [dosya]};
-    if (konu) veri.text = konu;
+    if (konu) veri.text = "📌 " + (konu || "Resmi yazı");
     if (navigator.canShare && navigator.canShare(veri)) {
       navigator.share(veri).catch(function(){});
     } else { ipucu.style.display = "block"; }
