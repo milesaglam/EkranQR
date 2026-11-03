@@ -28,7 +28,7 @@
   var s = q.get("s") || "", id = q.get("i") || "", konu = q.get("k") || "";
   var durum = document.getElementById("durum"), foto = document.getElementById("foto");
   var btn = document.getElementById("paylas"), ipucu = document.getElementById("ipucu");
-  if (konu) document.getElementById("konu").textContent = konu;
+  if (konu) document.getElementById("konu").textContent = "📌 " + (konu || "Resmi yazı");
   if (!/^[A-Za-z0-9_-]+$/.test(s) || !/^[A-Za-z0-9_-]+$/.test(id)) { durum.textContent = "Geçersiz bağlantı."; return; }
 
   var dosya = null;
