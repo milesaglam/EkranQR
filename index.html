@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resmi Yazı</title>
+<style>
+  body{margin:0;font-family:system-ui,sans-serif;background:#f2f2f2;color:#222;text-align:center}
+  header{padding:14px 12px 4px;font-weight:600}
+  #konu{padding:0 12px 8px;color:#555;font-size:15px}
+  #foto{max-width:100%;display:none;margin:0 auto;box-shadow:0 1px 6px #0003}
+  #durum{padding:24px 12px;color:#555}
+  #paylas{display:none;position:sticky;bottom:0;width:100%;padding:18px;font-size:19px;font-weight:600;
+          border:0;background:#25d366;color:#fff}
+  #ipucu{display:none;padding:10px 12px;color:#a00;font-size:14px}
+</style>
+</head>
+<body>
+<header>Resmi Yazı</header>
+<div id="konu"></div>
+<div id="durum">Yükleniyor…</div>
+<img id="foto" alt="Resmi yazı">
+<div id="ipucu">Bu tarayıcı doğrudan paylaşmayı desteklemiyor. Resme uzun basıp "Paylaş"ı seçin.</div>
+<button id="paylas">WhatsApp'ta paylaş</button>
+<script>
+(function(){
+  var q = new URLSearchParams(location.search);
+  var s = q.get("s") || "", id = q.get("i") || "", konu = q.get("k") || "";
+  var durum = document.getElementById("durum"), foto = document.getElementById("foto");
+  var btn = document.getElementById("paylas"), ipucu = document.getElementById("ipucu");
+  if (konu) document.getElementById("konu").textContent = konu;
+  if (!/^[A-Za-z0-9_-]+$/.test(s) || !/^[A-Za-z0-9_-]+$/.test(id)) { durum.textContent = "Geçersiz bağlantı."; return; }
+
+  var dosya = null;
+  fetch("https://script.google.com/macros/s/" + s + "/exec?id=" + id)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (!d.ok) throw new Error(d.hata || "okunamadı");
+      var bin = atob(d.veri), b = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) b[i] = bin.charCodeAt(i);
+      dosya = new File([b], d.ad || "resmi_yazi.png", {type: "image/png"});
+      foto.src = URL.createObjectURL(dosya);
+      foto.style.display = "block"; durum.style.display = "none"; btn.style.display = "block";
+      if (!(navigator.canShare && navigator.canShare({files: [dosya]}))) ipucu.style.display = "block";
+    })
+    .catch(function(e){ durum.textContent = "Resim yüklenemedi: " + e.message; });
+
+  btn.addEventListener("click", function(){
+    if (!dosya) return;
+    var veri = {files: [dosya]};
+    if (konu) veri.text = konu;
+    if (navigator.canShare && navigator.canShare(veri)) {
+      navigator.share(veri).catch(function(){});
+    } else { ipucu.style.display = "block"; }
+  });
+})();
+</script>
+</body>
+</html>
